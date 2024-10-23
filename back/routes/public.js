@@ -20,22 +20,22 @@ router.post("/login", async (req, res) => {
     });
 
     //Faz a verificação se existe um usuário no banco
-    if(!user){
-      return res.status(404).json({message: "Usuário não encontrado"})
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" })
     }
 
 
     //Faz a comparação de senah com a senha qeue o usuário colocou
     const isMatch = await bcrypt.compare(userInfo.password, user.password)
 
-    if(!isMatch){
-      return res.status(400).json({ message: " Senha Inválida"})
+    if (!isMatch) {
+      return res.status(400).json({ message: " Senha Inválida" })
     }
 
 
     //Geração do Token JWC
 
-    const token = jwt.sign({id: user.id}, JWT_SECRET, { expiresIn: '20d'})
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '20d' })
 
 
     res.status(200).json(token)
@@ -48,26 +48,52 @@ router.post("/login", async (req, res) => {
 
 
 
+
+
 //Cadastro
 router.post("/cadastro", async (req, res) => {
-  try {
-    const user = req.body;
- 
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(user.password, salt);
+  //receber as variaveis
+  const user = req.body;
 
-    const userDB = await prisma.user.create({
-      data: {
+  //realiza a contagem da quentidade de letras no nome  
+  const VerirNamer = user.name
+  const QtLetrasName = VerirNamer.length
 
-        name: user.name,
-        email: user.email,
-        password: hashPassword,
-      },
-    });
-    res.status(201).json(userDB);
-  } catch (err) {
-    res.status(500).json({ messege: `Erro no servidaor, Tente novamente ${err}` });
-  }
+  //realiza a contagem da quentidade de letras no Email com e sem o "@gmail.com"
+  const Veriremail = user.email
+  const QtLetrasEmail = Veriremail.length
+  const LetrasSemEmail = Veriremail.replace('@gmail.com', '')
+  const QtLetrasSemEmail = LetrasSemEmail.length
+
+  //realiza a contagem da quentidade de letras na senha
+  const VerirPassword = user.password
+  const QtLetrasPassword = VerirPassword.length
+
+  //if das const
+  if (QtLetrasName > 3) {
+    if (QtLetrasEmail >= 14 && QtLetrasEmail - 10 == QtLetrasSemEmail) {
+      if (QtLetrasPassword >= 8) {
+
+        try {
+
+          const salt = await bcrypt.genSalt(10);
+          const hashPassword = await bcrypt.hash(user.password, salt);
+
+          const userDB = await prisma.user.create({
+            data: {
+
+              name: user.name,
+              email: user.email,
+              password: hashPassword,
+            },
+          });
+          res.status(201).json(userDB);
+        } catch (err) {
+          res.status(500).json({ messege: `Erro no servidaor, Tente novamente` });
+        }
+      } else { res.status(500).json({ messege: `Erro na senha, quantidades de caracteres insuficiente` }); }
+    } else { res.status(500).json({ messege: `Erro, Email invalido` }); }
+  } else { res.status(500).json({ messege: `Erro no nome, quantidades de caracteres insuficiente` }); }
 });
 
 
@@ -79,6 +105,6 @@ router.post("/cadastro", async (req, res) => {
 
 // Editar Usuário
 
- 
+
 
 export default router;
