@@ -13,4 +13,14 @@ app.use('/', publicRoutes)
 app.use('/' ,auth,  privateRoutes)
 
 
-app.listen(3000, () => console.log("Tá rodando"))
+app.listen(3000, () => console.log(`
+☆ ┌─┐  　─┐☆
+　│▒│  /▒/
+　│▒│ /▒/
+　│▒/▒/─┬─┐
+　│▒│▒|▒│▒│
+┌┴─┴─┐-┘─┘
+│▒┌──┘▒▒▒│
+└┐▒▒▒▒▒▒┌┘
+　└┐▒▒▒▒┌⠀⠀⠀
+    `));

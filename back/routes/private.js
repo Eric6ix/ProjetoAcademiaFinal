@@ -25,19 +25,18 @@ router.put("/usuarios/:id", async (req, res) => {
         id: req.params.id,
       },
       data: {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.hashPassword,
+        name: req.body.name,          // Atualiza o nome
+        email: req.body.email,        // Atualiza o email
+        password: req.body.hashPassword,  // Atualiza a senha (hash)
       },
     });
     res.status(201).json(req.body);
-    console.log("🚀 ~ router.put ~ ok:")
-
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "falha na Edição" });
+    res.status(500).json({ message: "Falha na Edição" });
   }
 });
+
 
 //deletar
 router.delete("/usuarios/:email", async (req, res) => {
