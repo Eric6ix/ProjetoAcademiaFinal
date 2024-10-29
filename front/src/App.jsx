@@ -1,9 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Cadastro from "./Pages/cadastro"
+import Cadastro from "./Pages/Cadastro"
 import Lista from "./Pages/Lista"
 import Login from "./Pages/Login"
 import Home from "./Pages/Home"
-
 
 
 function App() {

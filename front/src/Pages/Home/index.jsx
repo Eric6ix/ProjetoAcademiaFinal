@@ -17,33 +17,36 @@ function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-900 text-white">
       {/* Cabeçalho */}
-      <header className="w-full bg-gray-800 py-4 flex justify-between items-center px-8">
-        {/* Campo para a logo */}
-        <div className="w-24 h-24 bg-gray-700 rounded-full flex justify-center items-center">
-          <span className="text-sm text-gray-400">Logo Aqui</span>
-        </div>
+      <header className="w-full bg-gray-800 py-4 flex items-center px-8">
+  {/* Campo para a logo */}
+  <div className="w-24 h-24 bg-gray-700 rounded-full flex justify-center items-center">
+    <span className="text-sm text-gray-400">Logo Aqui</span>
+  </div>
 
-        {/* Título */}
-        <h1 className="text-4xl font-bold text-green-500">AcademiaDEV</h1>
+  {/* Título */}
+  <h1 className="flex-grow text-center text-4xl font-bold text-green-500">
+    AcademiaDEV
+  </h1>
 
-        {/* Botões de Navegação */}
-        <div className="flex space-x-4">
-          <button
-            onClick={handleNavigateCadastro}
-            className="bg-green-400 hover:bg-green-500 text-gray-900 font-bold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2"
-          >
-            <i className="bi bi-person-fill"></i>
-            <span>Cadastrar</span>
-          </button>
-          <button
-            onClick={handleNavigateCompras}
-            className="bg-blue-400 hover:bg-blue-500 text-gray-900 font-bold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2"
-          >
-            <i className="bi bi-cart-fill"></i>
-            <span>Compras</span>
-          </button>
-        </div>
-      </header>
+  {/* Botões de Navegação */}
+  <div className="flex space-x-4">
+    <button
+      onClick={handleNavigateCadastro}
+      className="bg-green-400 hover:bg-green-500 text-gray-900 font-bold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2"
+    >
+      <i className="bi bi-person-fill"></i>
+      <span>Cadastrar</span>
+    </button>
+    <button
+      onClick={handleNavigateCompras}
+      className="bg-blue-400 hover:bg-blue-500 text-gray-900 font-bold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2"
+    >
+      <i className="bi bi-cart-fill"></i>
+      <span>Compras</span>
+    </button>
+  </div>
+</header>
+
 
       {/* Seção principal */}
       <main className="flex flex-col items-center mt-10">
