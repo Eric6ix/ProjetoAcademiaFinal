@@ -35,8 +35,8 @@ router.put("/editarusuarios/:email", async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////deletar
-router.delete("/usuarios/:email", async (req, res) => {
+//deletar
+router.delete("/usuariosdell/:email", async (req, res) => {
   try {
     await prisma.user.delete({
       where: {
@@ -47,10 +47,9 @@ router.delete("/usuarios/:email", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "falha ao Deletar" });
+    err;
   }
 });
-
-
 
 //pesquisar com o body
 router.post("/pesquisar/:email", async (req, res) => {
@@ -61,7 +60,9 @@ router.post("/pesquisar/:email", async (req, res) => {
       },
     });
     if (user) {
-      res.status(201).json({ user, message: "Usuário encontrado com Sucesso!!!" });
+      res
+        .status(201)
+        .json({ user, message: "Usuário encontrado com Sucesso!!!" });
     } else {
       res.status(404).json({ message: "Usuário não encontrado" });
     }
@@ -70,7 +71,6 @@ router.post("/pesquisar/:email", async (req, res) => {
     res.status(500).json({ message: "Falha ao pesquisar" });
   }
 });
-
 
 export default router;
 

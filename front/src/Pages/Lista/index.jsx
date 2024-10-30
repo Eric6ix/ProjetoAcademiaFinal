@@ -31,7 +31,7 @@ function ListarUsuarios() {
       alert("Usuário não está autenticado.");
       return;
     }
-    
+
     setLoading(true);
     try {
       const {
@@ -56,10 +56,6 @@ function ListarUsuarios() {
     localStorage.removeItem("token");
     alert("Você foi deslogado");
     navigate("/");
-  }
-
-  function handleSearch() {
-    alert(`Procurando por: ${searchTerm}`);
   }
 
   function openEditModal(user) {
@@ -110,6 +106,30 @@ function ListarUsuarios() {
     }
   }
 
+  async function DeletarUserVerToken(user) {
+    const token = localStorage.getItem("token");
+    if (!user) {
+      alert("Nenhum usuário selecionado para exclusão.");
+      return;
+    }
+    try {
+      await api.delete(`/usuariosdell/${user.email}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Usuário deletado com sucesso!");
+      loadUsers();
+    } catch (err) {
+      alert("Erro ao deletar usuário");
+      console.log(err);
+    }
+  }
+
+  // Filtrando os usuários com base no termo de pesquisa
+  const filteredUsers = allUsers.filter((user) =>
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center">
       <header className="w-full max-w-3xl px-4 py-6 bg-gray-800 rounded-md shadow-lg flex justify-between items-center">
@@ -131,10 +151,7 @@ function ListarUsuarios() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-l-md focus:outline-none text-white placeholder-gray-400"
           />
-          <button
-            onClick={handleSearch}
-            className="bg-green-500 px-4 py-2 rounded-r-md hover:bg-green-600 transition"
-          >
+          <button className="bg-green-500 px-4 py-2 rounded-r-md hover:bg-green-600 transition">
             <AiOutlineSearch />
           </button>
           <button
@@ -145,12 +162,12 @@ function ListarUsuarios() {
           </button>
         </div>
 
-        {loading ? ( // Exibe loading enquanto busca
+        {loading ? (
           <p className="text-center text-gray-400">Carregando usuários...</p>
         ) : (
           <ul className="space-y-4">
-            {allUsers.length > 0 ? (
-              allUsers.map((user) => (
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
                 <li
                   key={user.id}
                   className="bg-gray-700 p-4 rounded-md flex justify-between items-center"
@@ -166,7 +183,10 @@ function ListarUsuarios() {
                     >
                       <AiOutlineEdit className="mr-1" /> Editar
                     </button>
-                    <button className="bg-red-500 px-3 py-2 rounded-md hover:bg-red-600 transition flex items-center">
+                    <button
+                      onClick={() => DeletarUserVerToken(user)}
+                      className="bg-red-500 px-3 py-2 rounded-md hover:bg-red-600 transition flex items-center"
+                    >
                       <AiOutlineDelete className="mr-1" /> Excluir
                     </button>
                   </div>
