@@ -3,7 +3,6 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,9 +11,66 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  name  String
-  password String
+model Funcionario {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  name       String
+  fone       String
+  dataNasc   String
+  dataContra String
+  password   String
+  address    Address? @relation("FuncionarioAddress", fields: [addressId], references: [id])
+  addressId  String?  @map("address_id") @db.ObjectId
+}
+
+model Aluno {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  name       String
+  fone       String
+  dataNasc   String
+  dataContra String
+  password   String
+  address    Address? @relation("AlunoAddress", fields: [addressId], references: [id])
+  addressId  String?  @map("address_id") @db.ObjectId
+}
+
+model Address {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  street       String
+  city         String
+  state        String
+  country      String
+  postalCode   String
+  type         String // 'Funcionario' ou 'Aluno'
+  funcionarios Funcionario[] @relation("FuncionarioAddress")
+  alunos       Aluno[]       @relation("AlunoAddress")
+}
+
+model Produto {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Float
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  compras     CompraProduto[]
+}
+
+model Compra {
+  id       String          @id @default(auto()) @map("_id") @db.ObjectId
+  date     DateTime        @default(now())
+  total    Float
+  estado   String // Ex: 'pendente', 'concluída'
+  produtos CompraProduto[]
+}
+
+model CompraProduto {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  compraId   String  @map("compra_id") @db.ObjectId
+  produtoId  String  @map("produto_id") @db.ObjectId
+  quantidade Int
+  preco      Float
+  compra     Compra  @relation(fields: [compraId], references: [id])
+  produto    Produto @relation(fields: [produtoId], references: [id])
 }
