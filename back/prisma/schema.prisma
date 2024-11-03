@@ -21,6 +21,8 @@ model Funcionario {
   password   String
   address    Address? @relation("FuncionarioAddress", fields: [addressId], references: [id])
   addressId  String?  @map("address_id") @db.ObjectId
+  UserCriacao DateTime @default(now())
+  UserEdicao DateTime @updatedAt
 }
 
 model Aluno {
@@ -33,6 +35,8 @@ model Aluno {
   password   String
   address    Address? @relation("AlunoAddress", fields: [addressId], references: [id])
   addressId  String?  @map("address_id") @db.ObjectId
+  UserCriacao DateTime @default(now())
+  UserEdicao DateTime @updatedAt
 }
 
 model Address {
@@ -55,6 +59,8 @@ model Produto {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   compras     CompraProduto[]
+  ProdutoCriacao DateTime @default(now())
+  ProdutoEdicao DateTime @updatedAt
 }
 
 model Compra {
@@ -73,4 +79,5 @@ model CompraProduto {
   preco      Float
   compra     Compra  @relation(fields: [compraId], references: [id])
   produto    Produto @relation(fields: [produtoId], references: [id])
+  diacompra DateTime @default(now())
 }
