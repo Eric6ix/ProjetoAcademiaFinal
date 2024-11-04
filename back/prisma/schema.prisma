@@ -11,56 +11,41 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
 model Funcionario {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  email      String   @unique
-  name       String
-  fone       String
-  dataNasc   String
-  dataContra String
-  password   String
-  address    Address? @relation("FuncionarioAddress", fields: [addressId], references: [id])
-  addressId  String?  @map("address_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  email       String   @unique
+  name        String
+  phone       String
+  dataNasc    String
+  dataContra  String
+  password    String
   UserCriacao DateTime @default(now())
-  UserEdicao DateTime @updatedAt
+  UserEdicao  DateTime @updatedAt
 }
 
 model Aluno {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  email      String   @unique
-  name       String
-  fone       String
-  dataNasc   String
-  dataContra String
-  password   String
-  address    Address? @relation("AlunoAddress", fields: [addressId], references: [id])
-  addressId  String?  @map("address_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  email       String   @unique
+  name        String
+  phone       String
+  peso        Float
+  dataNasc    String
+  password    String
   UserCriacao DateTime @default(now())
-  UserEdicao DateTime @updatedAt
-}
-
-model Address {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  street       String
-  city         String
-  state        String
-  country      String
-  postalCode   String
-  type         String // 'Funcionario' ou 'Aluno'
-  funcionarios Funcionario[] @relation("FuncionarioAddress")
-  alunos       Aluno[]       @relation("AlunoAddress")
+  UserEdicao  DateTime @updatedAt
 }
 
 model Produto {
-  id          String          @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  price       Float
-  description String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  compras     CompraProduto[]
-  ProdutoCriacao DateTime @default(now())
-  ProdutoEdicao DateTime @updatedAt
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  price          Float
+  description    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  compras        CompraProduto[]
+  ProdutoCriacao DateTime        @default(now())
+  ProdutoEdicao  DateTime        @updatedAt
 }
 
 model Compra {
@@ -72,12 +57,12 @@ model Compra {
 }
 
 model CompraProduto {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  compraId   String  @map("compra_id") @db.ObjectId
-  produtoId  String  @map("produto_id") @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  compraId   String   @map("compra_id") @db.ObjectId
+  produtoId  String   @map("produto_id") @db.ObjectId
   quantidade Int
   preco      Float
-  compra     Compra  @relation(fields: [compraId], references: [id])
-  produto    Produto @relation(fields: [produtoId], references: [id])
-  diacompra DateTime @default(now())
+  compra     Compra   @relation(fields: [compraId], references: [id])
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  diacompra  DateTime @default(now())
 }
