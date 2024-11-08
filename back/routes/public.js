@@ -1,11 +1,13 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { body, validationResult } from "express-validator"; // Corrigido aqui
+import jwt from "jsonwebtoken"
+
 
 const prisma = new PrismaClient();
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post(
   "/login",
@@ -23,23 +25,41 @@ router.post(
     try {
       const { email, password } = req.body;
 
-      // Busca no banco de dados pelo email
-      const aluno = await prisma.aluno.findUnique({
+      // Tenta buscar o usuário na tabela User
+      const user = await prisma.user.findUnique({
         where: { email },
       });
 
       // Verifica se o usuário existe
-      if (!aluno) {
+      if (!user) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
 
+      // Verifica se o role do usuário é válido
+      const validRoles = ['ALUNO', 'FUNCIONARIO', 'ADMIN'];
+      if (!validRoles.includes(user.role)) {
+        return res.status(400).json({ message: "Role inválido para este usuário" });
+      }
+
       // Comparação da senha
-      const isMatch = await bcrypt.compare(password, aluno.password);
+      const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ message: "Senha inválida" });
       }
 
-      res.status(200).json("ok");
+      // Geração do token JWT
+      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "20d" });
+
+      // Retorna o tipo de usuário (role) e id na resposta
+      res.status(200).json({
+        message: "Login bem-sucedido",
+        message: `Token:    ${token}`,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,  // Inclui o role no retorno
+        },
+      });
     } catch (err) {
       console.error(err); // Log do erro
       res.status(500).json({ message: "Erro no servidor, tente novamente" });
@@ -47,25 +67,30 @@ router.post(
   }
 );
 
+
+
+
+
 //Cadastro
-router.post("/cadastroaluno", async (req, res) => {
+router.post("/cadastro", async (req, res) => {
   try {
-    const aluno = req.body;
+    const User = req.body;
 
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(aluno.password, salt);
+    const hashPassword = await bcrypt.hash(User.password, salt);
 
-    const alunoDB = await prisma.aluno.create({
+    const UserDB = await prisma.User.create({
       data: {
-        email: aluno.email,
-        name: aluno.name,
-        phone: aluno.phone,
-        peso: aluno.peso,
-        dataNasc: aluno.dataNasc,
+        role:User.role = "ALUNO",
+        name: User.name,
+        email: User.email,
+        phone: User.phone,
+        peso: User.peso,
+        dataNasc: User.dataNasc,
         password: hashPassword,
       },
     });
-    res.status(201).json(alunoDB);
+    res.status(201).json(UserDB);
   } catch (err) {
     res
       .status(500)

@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use('/', publicRoutes)
-app.use('/' ,  privateFuncionario)
+app.use('/' ,auth,  privateFuncionario)
 
 
 app.listen(3000, () => console.log(`

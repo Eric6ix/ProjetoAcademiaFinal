@@ -26,23 +26,23 @@ router.post(
       const { email, password } = req.body;
 
       // Busca no banco de dados pelo email
-      const funcionario = await prisma.funcionario.findUnique({
+      const User = await prisma.User.findUnique({
         where: { email },
       });
 
       // Verifica se o e-mail do funcionário  existe
-      if (!funcionario) {
+      if (!User) {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
 
       // Comparação da senha
-      const isMatch = await bcrypt.compare(password, funcionario.password);
+      const isMatch = await bcrypt.compare(password, User.password);
       if (!isMatch) {
         return res.status(400).json({ message: "Senha inválida" });
       }
 
       // Geração do token JWT
-      const token = jwt.sign({ id: funcionario.id }, JWT_SECRET, {
+      const token = jwt.sign({ id: User.id }, JWT_SECRET, {
         expiresIn: "20d",
       });
 
@@ -54,39 +54,13 @@ router.post(
   }
 );
 
-//Cadastro
-router.post("/cadastrofuncionario", async (req, res) => {
+
+
+router.get("/listausuario", async (req, res) => {
   try {
-    const funcionario = req.body;
+    const usuarios = await prisma.User.findMany();
 
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(funcionario.password, salt);
-
-    const funcionarioDB = await prisma.funcionario.create({
-      data: {
-        email: funcionario.email,
-        name: funcionario.name,
-        phone: funcionario.phone,
-        dataNasc: funcionario.dataNasc,
-        dataContra: funcionario.dataContra,
-        password: hashPassword,
-      },
-    });
-    res.status(201).json(funcionarioDB);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ messege: `Erro no servidaor, Tente novamente ${err}` });
-    console.log(err);
-  }
-});
-
-
-router.get("/listafuncionario", async (req, res) => {
-  try {
-    const funcionarios = await prisma.funcionario.findMany();
-
-    res.status(200).json({ message: "Usuário listado com sucesso", funcionarios });
+    res.status(200).json({ message: "Usuário listado com sucesso", usuarios });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "falha no servidor" });
@@ -94,36 +68,28 @@ router.get("/listafuncionario", async (req, res) => {
 });
 
 
-router.get("/listaaluno", async (req, res) => {
-  try {
-    const aluno = await prisma.aluno.findMany();
-
-    res.status(200).json({ message: "Usuário listado com sucesso", aluno });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "falha no servidor" });
-  }
-});
-
 
 router.post("/cadastrofuncionario", async (req, res) => {
   try {
-    const funcionario = req.body;
+    const User = req.body;
 
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(funcionario.password, salt);
+    const hashPassword = await bcrypt.hash(User.password, salt);
 
-    const funcionarioDB = await prisma.funcionario.create({
+    const funcionarioDB = await prisma.User.create({
       data: {
-        email: funcionario.email,
-        name: funcionario.name,
-        phone: funcionario.phone,
-        peso: funcionario.peso,
-        dataNasc: funcionario.dataNasc,
+        role: User.role = "FUNCIONARIO",
+        name: User.name,
+        email: User.email,
+        phone: User.phone,
+        peso: User.peso,
+        dataContra: User.dataContra,
+        dataNasc: User.dataNasc,
         password: hashPassword,
       },
     });
-    res.status(201).json(funcionarioDB);
+    res.status(201).json({ messege: `Sucesso! ${User.email} Cadastrado` });
+
   } catch (err) {
     res
       .status(500)
@@ -136,7 +102,7 @@ router.post("/cadastrofuncionario", async (req, res) => {
 // Rota para editar usuário
 router.put("/editarusuarios/:email", async (req, res) => {
   try {
-    await prisma.funcionario.update({
+    await prisma.User.update({
       where: {
         email: req.params.email,
       },
@@ -156,7 +122,7 @@ router.put("/editarusuarios/:email", async (req, res) => {
 //deletar
 router.delete("/funcionariodell/:email", async (req, res) => {
   try {
-    await prisma.funcionario.delete({
+    await prisma.User.delete({
       where: {
         email: req.params.email,
       },
@@ -170,9 +136,9 @@ router.delete("/funcionariodell/:email", async (req, res) => {
 });
 
 
-router.delete("/alunodell/:email", async (req, res) => {
+router.delete("/Userdell/:email", async (req, res) => {
   try {
-    await prisma.aluno.delete({
+    await prisma.User.delete({
       where: {
         email: req.params.email,
       },
@@ -186,17 +152,17 @@ router.delete("/alunodell/:email", async (req, res) => {
 });
 
 //pesquisar com o body
-router.post("/pesquisaraluno/:email", async (req, res) => {
+router.post("/pesquisarUser/:email", async (req, res) => {
   try {
-    const aluno = await prisma.aluno.findUnique({
+    const User = await prisma.User.findUnique({
       where: {
         email: req.body.email,
       },
     });
-    if (aluno) {
+    if (User) {
       res
         .status(201)
-        .json({ aluno, message: "Usuário encontrado com Sucesso!!!" });
+        .json({ User, message: "Usuário encontrado com Sucesso!!!" });
     } else {
       res.status(404).json({ message: "Usuário não encontrado" });
     }
@@ -210,15 +176,15 @@ router.post("/pesquisaraluno/:email", async (req, res) => {
 
 router.post("/pesquisar/:email", async (req, res) => {
   try {
-    const funcionario = await prisma.funcionario.findUnique({
+    const User = await prisma.User.findUnique({
       where: {
         email: req.body.email,
       },
     });
-    if (funcionario) {
+    if (User) {
       res
         .status(201)
-        .json({ funcionario, message: "Usuário encontrado com Sucesso!!!" });
+        .json({ User, message: "Usuário encontrado com Sucesso!!!" });
     } else {
       res.status(404).json({ message: "Usuário não encontrado" });
     }
