@@ -14,42 +14,46 @@ function Home() {
     navigate("/compras");
   };
 
+  const handleNavigateFuncionarios = () => {
+    navigate("/loginFuncionario");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-900 text-white">
       {/* Cabeçalho */}
-      <header className="w-full bg-gray-800 py-4 flex items-center px-8">
-  {/* Campo para a logo */}
-  <div className="w-24 h-24 bg-gray-700 rounded-full flex justify-center items-center">
-    <span className="text-sm text-gray-400">Logo Aqui</span>
-  </div>
+      <header className="w-full bg-gray-800 py-4 flex items-center justify-between px-8 shadow-lg">
+        {/* Campo para a logo */}
+        <div className="w-24 h-24 bg-gray-700 rounded-full flex justify-center items-center mr-8 transition-transform hover:scale-110">
+          <span className="text-xl text-gray-400 font-bold">Logo</span>
+        </div>
 
-  {/* Título */}
-  <h1 className="flex-grow text-center text-4xl font-bold text-green-500">
-    AcademiaDEV
-  </h1>
-
-  {/* Botões de Navegação */}
-  <div className="flex space-x-4">
-    <button
-      onClick={handleNavigateCadastro}
-      className="bg-green-400 hover:bg-green-500 text-gray-900 font-bold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2"
-    >
-      <i className="bi bi-person-fill"></i>
-      <span>Cadastrar</span>
-    </button>
-    <button
-      onClick={handleNavigateCompras}
-      className="bg-blue-400 hover:bg-blue-500 text-gray-900 font-bold py-2 px-4 rounded-full transition duration-300 flex items-center space-x-2"
-    >
-      <i className="bi bi-cart-fill"></i>
-      <span>Compras</span>
-    </button>
-  </div>
-</header>
-
-
-      {/* Seção principal */}
-      <main className="flex flex-col items-center mt-10">
+        {/* Botões de Navegação */}
+        <div className="flex space-x-6">
+          <button
+            onClick={handleNavigateCadastro}
+            className="bg-green-400 hover:bg-green-500 text-gray-900 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2"
+          >
+            <i className="bi bi-person-fill"></i>
+            <span>Cadastrar</span>
+          </button>
+          <button
+            onClick={handleNavigateCompras}
+            className="bg-blue-400 hover:bg-blue-500 text-gray-900 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2"
+          >
+            <i className="bi bi-cart-fill"></i>
+            <span>Compras</span>
+          </button>
+          <button
+            onClick={handleNavigateFuncionarios}
+            className="bg-purple-400 hover:bg-purple-500 text-gray-900 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2"
+          >
+            <i className="bi bi-person-badge"></i>
+            <span>Funcionários</span>
+          </button>
+        </div>
+      </header>
+{/* Seção principal */}
+<main className="flex flex-col items-center mt-10">
         <h2 className="text-2xl font-semibold mb-6">Bem-vindo à AcademiaDEV</h2>
         <p className="mb-8 text-lg text-gray-300 text-center">
           Seu lugar para alcançar seus objetivos de fitness!
@@ -98,7 +102,7 @@ function Home() {
 
       {/* Rodapé */}
       <footer className="w-full bg-gray-800 py-4 mt-auto">
-        <p className="text-center text-gray-400">
+        <p className="text-center text-gray-400 text-sm">
           © 2024 AcademiaDEV - Todos os direitos reservados
         </p>
       </footer>

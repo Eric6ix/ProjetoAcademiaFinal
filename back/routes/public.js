@@ -2,12 +2,15 @@ import express from "express";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { body, validationResult } from "express-validator"; // Corrigido aqui
-import jwt from "jsonwebtoken"
-
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
+const validateEmail = (email) => {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  return regex.test(email);
+};
 
 router.post(
   "/login",
@@ -35,31 +38,72 @@ router.post(
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
 
-      // Verifica se o role do usuário é válido
-      const validRoles = ['ALUNO', 'FUNCIONARIO', 'ADMIN'];
-      if (!validRoles.includes(user.role)) {
-        return res.status(400).json({ message: "Role inválido para este usuário" });
-      }
-
       // Comparação da senha
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ message: "Senha inválida" });
       }
 
-      // Geração do token JWT
+      // Geração do token JWT com o jsonwebtoken
       const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "20d" });
 
-      // Retorna o tipo de usuário (role) e id na resposta
-      res.status(200).json({
-        message: "Login bem-sucedido",
-        message: `Token:    ${token}`,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,  // Inclui o role no retorno
-        },
+      // Enviar o token em um objeto JSON
+      res.status(200).json({ token });
+
+    } catch (err) {
+      res.status(500).json({
+        message: "Erro no servidor, tente novamente",
+        error: err.message,  // Detalhes do erro, caso necessário
       });
+    }
+  }
+);
+
+
+// Login Funcionários
+router.post(
+  "/loginfuncionario",
+  [
+    body("email").isEmail().withMessage("Email inválido"),
+    body("password").notEmpty().withMessage("Senha é obrigatória"),
+  ],
+  async (req, res) => {
+    // Verifica erros de validação
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { email, password } = req.body;
+
+      // Busca no banco de dados pelo email
+      const User = await prisma.User.findUnique({
+        where: { email },
+      });
+
+      // Verifica se o e-mail do funcionário existe
+      if (!User) {
+        return res.status(404).json({ message: "Usuário não encontrado" });
+      }
+
+      // Verifica se o usuário tem o papel de "FUNCIONARIO"
+      if (User.role !== "FUNCIONARIO") {
+        return res.status(403).json({ message: "Acesso restrito a funcionários" });
+      }
+
+      // Comparação da senha
+      const isMatch = await bcrypt.compare(password, User.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Senha inválida" });
+      }
+
+      // Geração do token JWT
+      const token = jwt.sign({ id: User.id }, JWT_SECRET, {
+        expiresIn: "20d",
+      });
+
+      res.status(200).json({ token });
     } catch (err) {
       console.error(err); // Log do erro
       res.status(500).json({ message: "Erro no servidor, tente novamente" });
@@ -68,34 +112,51 @@ router.post(
 );
 
 
-
-
-
-//Cadastro
 router.post("/cadastro", async (req, res) => {
   try {
-    const User = req.body;
+    const { name, email, phone, peso, dataNasc, password } = req.body;
 
+    // Verificar se todos os campos obrigatórios estão presentes
+    if (!name || !email || !phone || !peso || !dataNasc || !password) {
+      return res
+        .status(400)
+        .json({ message: "Todos os campos são obrigatórios." });
+    }
+
+    // Validar o formato do email
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: "Email inválido." });
+    }
+
+    // Verificar se o email já está em uso
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Este email já está em uso." });
+    }
+
+    // Criptografar a senha
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(User.password, salt);
+    const hashPassword = await bcrypt.hash(password, salt);
 
-    const UserDB = await prisma.User.create({
+    // Criar o novo usuário no banco de dados
+    const user = await prisma.user.create({
       data: {
-        role:User.role = "ALUNO",
-        name: User.name,
-        email: User.email,
-        phone: User.phone,
-        peso: User.peso,
-        dataNasc: User.dataNasc,
+        role: "ALUNO", // Definir o role como "ALUNO"
+        name,
+        email,
+        phone,
+        peso: parseFloat(peso), // Certificar-se de que o peso é um número
+        dataNasc: new Date(dataNasc), // Converter a data de nascimento para o formato Date
         password: hashPassword,
       },
     });
-    res.status(201).json(UserDB);
+
+    res.status(201).json({ message: "Usuário cadastrado com sucesso!", user });
   } catch (err) {
+    console.error(err);
     res
       .status(500)
-      .json({ messege: `Erro no servidaor, Tente novamente ${err}` });
-    console.log(err);
+      .json({ message: `Erro no servidor. Tente novamente mais tarde.` });
   }
 });
 

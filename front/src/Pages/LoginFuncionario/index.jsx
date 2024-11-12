@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   AiOutlineMail,
   AiOutlineLock,
@@ -18,7 +18,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/login", {
+      const { data } = await api.post("/loginfuncionario", {
         email: emailRef.current.value,
         password: passwordRef.current.value,
       });
@@ -49,7 +49,7 @@ function Login() {
         </button>
 
         <h2 className="text-3xl font-bold mb-6 text-center text-green-500">
-          Login
+          Funcionário Login
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -88,14 +88,6 @@ function Login() {
             {loading ? "Carregando..." : "Logar"}
           </button>
         </form>
-
-        {/* Link para Cadastro */}
-        <Link
-          to="/cadastro"
-          className="text-green-400 hover:underline mt-4 block text-center"
-        >
-          Não tem uma conta? Faça o Cadastro
-        </Link>
       </div>
     </div>
   );

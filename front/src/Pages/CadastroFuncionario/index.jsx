@@ -16,6 +16,7 @@ function Cadastro() {
   const emailRef = useRef();
   const phoneRef = useRef();
   const pesoRef = useRef();
+  const dataContraRef = useRef();
   const dataNascRef = useRef();
   const passwordRef = useRef();
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ function Cadastro() {
       !phoneRef.current.value ||
       !pesoRef.current.value ||
       !dataNascRef.current.value ||
+      !dataContraRef.current.value ||
       !passwordRef.current.value
     ) {
       setErrorMessage("Todos os campos são obrigatórios.");
@@ -73,16 +75,19 @@ function Cadastro() {
       email: emailRef.current.value,
       phone: phoneRef.current.value,
       peso: parseFloat(pesoRef.current.value), // Garantir que o peso seja um número
+      dataContra: new Date(dataContraRef.current.value).toISOString(), // Convertendo para ISO 8601
       dataNasc: new Date(dataNascRef.current.value).toISOString(), // Convertendo para ISO 8601
       password: passwordRef.current.value,
     };
 
     try {
       // Chamar a API para cadastro
-      await api.post("/cadastro", userData);
+      const token = localStorage.getItem("token");
+      await api.post("/cadastroFuncionario", userData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       alert("Usuário cadastrado com sucesso!");
-      navigate("/login"); // Redireciona para o login após sucesso
     } catch (err) {
       setErrorMessage("Erro ao cadastrar este usuário! Tente novamente.");
     }
@@ -101,7 +106,7 @@ function Cadastro() {
         </button>
 
         <h2 className="text-3xl font-bold mb-6 text-center text-green-500">
-          Cadastro
+          Cadastro Funcionário
         </h2>
 
         {/* Exibir mensagem de erro, se houver */}
@@ -156,6 +161,16 @@ function Cadastro() {
           </div>
 
           {/* Campo Data de Nascimento */}
+          <div className="relative">
+            <AiOutlineCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              ref={dataContraRef}
+              placeholder="Data de Contratação"
+              type="date"
+              className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-white placeholder-gray-400"
+            />
+          </div>
+
           <div className="relative">
             <AiOutlineCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input

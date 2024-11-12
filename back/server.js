@@ -1,6 +1,6 @@
 import express from 'express'
 import publicRoutes from './routes/public.js'
-import privateFuncionario from './routes/funcionario.js'
+import privado from './routes/private.js'
 import cors from 'cors'
 
 import auth from './middlewares/auth.js'
@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use('/', publicRoutes)
-app.use('/' ,auth,  privateFuncionario)
+app.use('/' ,auth,  privado)
 
 
 app.listen(3000, () => console.log(`
