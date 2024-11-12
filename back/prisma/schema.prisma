@@ -30,12 +30,11 @@ model User {
 
 model Produto {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
+  name           String          @unique
   preco          Float
   descricao      String?
-  dataVal        DateTime        @default(now())
   dataFab        DateTime        @updatedAt
-  compras        CompraProduto[]
+  dataVal        DateTime        @default(now())
   ProdutoCriacao DateTime        @default(now())
   ProdutoEdicao  DateTime        @updatedAt
 }
@@ -45,16 +44,4 @@ model Compra {
   date    DateTime        @default(now())
   total   Float
   estado  String // Ex: 'pendente', 'concluída'
-  produto CompraProduto[]
-}
-
-model CompraProduto {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  compraId   String   @map("compra_id") @db.ObjectId
-  produtoId  String   @map("produto_id") @db.ObjectId
-  quantidade Int
-  preco      Float
-  compra     Compra   @relation(fields: [compraId], references: [id])
-  produto    Produto  @relation(fields: [produtoId], references: [id])
-  diacompra  DateTime @default(now())
 }

@@ -10,12 +10,12 @@ function Home() {
     navigate("/cadastro");
   };
 
-  const handleNavigateCompras = () => {
-    navigate("/compras");
-  };
-
   const handleNavigateFuncionarios = () => {
     navigate("/loginFuncionario");
+  };
+
+  const handleNavigatelListaCompra = () => {
+    navigate("/Lista-Produto");
   };
 
   return (
@@ -37,7 +37,7 @@ function Home() {
             <span>Cadastrar</span>
           </button>
           <button
-            onClick={handleNavigateCompras}
+            onClick={handleNavigatelListaCompra}
             className="bg-blue-400 hover:bg-blue-500 text-gray-900 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2"
           >
             <i className="bi bi-cart-fill"></i>

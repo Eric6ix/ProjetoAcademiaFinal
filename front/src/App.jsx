@@ -5,6 +5,7 @@ import Lista from "./Pages/Lista"
 import Login from "./Pages/Login"
 import Home from "./Pages/Home"
 import LoginFncionario from "./Pages/LoginFuncionario"
+import ListaProduto from "./Pages/ListaProduto"
 
 function App() {
   
@@ -20,6 +21,7 @@ function App() {
     <Route path="/login" element={<Login />} />
     <Route path="/loginFuncionario" element={<LoginFncionario />} />
     <Route path="/listar-usuarios" element={<Lista />} />
+    <Route path="/Lista-Produto" element={<ListaProduto />} />
 
      </Routes>
      </BrowserRouter>
