@@ -25,7 +25,8 @@ function Login() {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        navigate("/listar-usuarios");
+        alert("Bem-vindo");
+        navigate("/");
       } else {
         alert("Erro ao fazer login. Tente novamente.");
         console.log(data.token)
@@ -33,6 +34,7 @@ function Login() {
     } catch (err) {
       alert("Senha ou E-mail inválido");
     } finally {
+      
       setLoading(false);
     }
   }

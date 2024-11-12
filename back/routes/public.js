@@ -49,7 +49,6 @@ router.post(
 
       // Enviar o token em um objeto JSON
       res.status(200).json({ token });
-
     } catch (err) {
       res.status(500).json({
         message: "Erro no servidor, tente novamente",

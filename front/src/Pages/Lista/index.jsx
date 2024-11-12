@@ -262,11 +262,12 @@ function ListarUsuarios() {
                 placeholder="Data de Contratação"
                 className="w-full mb-3 p-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
+              
               <input
                 type="text"
-                value={userDataNasc}
+                value={user}
                 onChange={(e) => setUserDataNasc(e.target.value)}
-                placeholder="Data de Nascimento"
+                placeholder="Senha"
                 className="w-full mb-3 p-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <input
